@@ -1,0 +1,232 @@
+<!DOCTYPE html><html><head><title>自訂義指令</title><meta name="viewport" content="width=device-width, initial-scale=1"><link href="images/favicon.ico" rel="shortcut icon"><meta charset="UTF-8"><script src="/javascripts/vendor.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.37/vue.global.js"></script></head><body class="bg-lighter">
+<div class="container main my-5"><div class="row"><main class="col post">
+<!-- 章節標題 --><div class="mb-4"><h1 class="mt-0 text-muted">自訂義指令</h1><small>檔名：<code>adv-directive.html</code></small></div>
+<!-- 🔥🔥練習開始🔥🔥 -->
+
+<div id="app">
+  <h2>自訂義指令</h2>
+  <h3>用途</h3>
+
+  <ul>
+    <li>實戰中屬於進階功能，初學可先了解有此功能即可</li>
+    <li>可從延伸套件中看到相關的運用</li>
+    <li>多用於 HTML 上的便利操作，複雜功能還是會搭配元件</li>
+  </ul>
+
+  <h3>結構</h3>
+  <ul>
+    <li>v-{自訂義名稱}</li>
+    <li>主要透過生命週期來觸發變動，可參考：<a
+        href="https://vue3js.cn/docs/zh/guide/custom-directive.html#%E5%8A%A8%E6%80%81%E6%8C%87%E4%BB%A4%E5%8F%82%E6%95%B0">https://vue3js.cn/docs/zh/guide/custom-directive.html#%E5%8A%A8%E6%80%81%E6%8C%87%E4%BB%A4%E5%8F%82%E6%95%B0</a></li>
+  </ul>
+  <input type="email" v-model="text" v-validator="'form-control'">
+
+</div>
+<script type="module">
+const app = Vue.createApp({
+  data() {
+    return {
+      text: '',
+    }
+  },
+});
+
+// 註冊指令
+app.directive('validator', {
+  // directive 生命週期
+  mounted(el, binding) {
+    el.focus();
+    // el 代表觸發指令的 HTML 元素
+    // 參數 el 對應到的是 <input type="email" />
+    // 將外部的值改為
+    console.log(binding);
+    el.className = binding.value;
+    // 將 form-control 綁定到 input 的 className 上
+    // binding.value 接收到的值為 'form-control'
+    // el.className=binding.value 的用途是將 v-validator 指令接受到的值 'form-control' 寫入觸發指令 HTML 的 class 屬性
+  },
+  updated: function(el, binding, vnode) {
+    // el 為元素本體
+    // binding 綁定的資源狀態
+    // vnode   Vue 生成元素的虛擬 DOM 節點
+    // 虛擬節點 ( virtual DOM )的用途是提高操作 DOM 節點的效率，避免直接操作 DOM 導致大量的重新渲染和重繪，影響效能
+    // 使用虛擬節點時會根據 DOM Tree 的結構虛擬出相同結構的 virtual DOM tree ，後續更改 DOM 會先在虛擬節點上執行，框架會生成另一份新的 virtual DOM tree，計算新( 更動後 ) 舊( 更動前 ) virtual DOM tree 的差異，最後真實的 DOM 更新只會重新渲染有變動的部分
+    console.log('update', el, binding, vnode);
+    const className = binding.value;
+
+    // 尋找當前的 model 名稱（取得 key 值，並帶入第一個）
+    const currentModel = Object.keys(binding.instance)[0];
+    // console.log(currentModel);
+    // Object.keys(binding.instance)[0]; 的用途是取出 v-model="text" 綁定的名稱 "text" 
+		// Object.keys(binding.instance) 會取出 binding.instance 物件的 key 值並回傳陣列 ['text'] ，最後在加上 [0] 從陣列取出 'text'
+
+    // 從當前 Model 取值
+    const value = binding.instance[currentModel];
+    console.log(currentModel, value);
+    // binding.instance[currentModel] 是取得 v-model="text" 的輸入值
+    // 將 currentModel 變數帶入後會是 binding.instance['text']
+  
+
+    // Email validate
+    const re = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+
+    if (!re.test(value)) {
+      el.className = `${className} is-invalid`
+    } else {
+      el.className = `${className} is-valid`
+    }
+  },
+})
+
+app.mount('#app');
+</script>
+
+<script>
+// ESM 版本的差異（需要 Webpack）
+// import { Field, Form, ErrorMessage } from 'vee-validate';
+//
+// export default {
+//   components: {
+//     Field,
+//     Form,
+//     ErrorMessage,
+//   },
+//   methods: {
+//     isRequired(value) {
+//       if (value && value.trim()) {
+//         return true;
+//       }
+//
+//       return 'This is required';
+//     },
+//   },
+// };
+</script>
+
+<!-- 🙇🙇練習結束🙇🙇 -->
+</main>
+  
+    <aside
+      class="col-md-3"><div class="sticky-top" style="top: 76px">
+  <div class="list-group">
+  
+    <a href="/advApi/adv-refs.html"
+      class="list-group-item list-group-item-action
+        
+        ">
+      Refs
+    </a>
+  
+    <a href="/advApi/adv-teleport.html"
+      class="list-group-item list-group-item-action
+        
+        ">
+      Teleport
+    </a>
+  
+    <a href="/advApi/adv-provide.html"
+      class="list-group-item list-group-item-action
+        
+        ">
+      跨層級資料傳遞 Provide
+    </a>
+  
+    <a href="/advApi/adv-component-v-model.html"
+      class="list-group-item list-group-item-action
+        
+        ">
+      製作包含 v-model 的元件
+    </a>
+  
+    <a href="/advApi/adv-mixins.html"
+      class="list-group-item list-group-item-action
+        
+        ">
+      Mixin 混合
+    </a>
+  
+    <a href="/advApi/adv-extend.html"
+      class="list-group-item list-group-item-action
+        
+        ">
+      Extend 擴展
+    </a>
+  
+    <a href="/advApi/adv-directive.html"
+      class="list-group-item list-group-item-action
+        
+        active">
+      自訂義指令
+    </a>
+  
+    <a href="/advApi/adv-use-plugin.html"
+      class="list-group-item list-group-item-action
+        
+        ">
+      外部套件引用
+    </a>
+  
+    <a href="/advApi/adv-vee-validation.html"
+      class="list-group-item list-group-item-action
+        
+        ">
+      表單驗證套件
+    </a>
+  
+  </div>
+  <div class="mt-3 text-end p-2 bg-light rounded">
+    <small class="text-black-50 fw-light mb-0">文件版本：2022/11/1</small>
+  </div>
+</div>
+
+</aside>
+    
+  </div>
+</div>
+
+<nav class="navbar fixed-top navbar-expand-sm navbar-dark bg-secondary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">Vue 3 練習手冊</a>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <ul class="navbar-nav">
+        <li class="nav-item active">
+          <a class="nav-link " href="/es6/shorthand.html">JS 必備觀念</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " href="/intro/createApp.html">認識 Vue.js</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " href="/template/v-text.html">模板</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " href="/optionsApi/options-methods.html">方法</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " href="/components/component_register.html">元件</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="/advApi/adv-refs.html">進階</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " href="/router/vue-router.html">路由</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " href="/composition/proxy.html">Composition API</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " href="/pinia/layout.html">Pinia</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<footer class="footer py-2 bg-light">
+  <div class="container text-center">
+    <small class="text-black-50 fw-light mb-0">六角學院 Vue 課程專屬文件</small>
+  </div>
+</footer>
+<link rel="stylesheet" href="/stylesheets/all.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+</body>
+</html>

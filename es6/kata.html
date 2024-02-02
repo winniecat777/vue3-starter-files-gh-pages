@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+    <ul></ul>
+    </div>
+    <input type="text" id="inputByAdd">
+    <button type="button" id="buttonByAdd">新增</button>
+    <script>
+    // 資料
+    const data = [
+        {
+        id: 1,
+        content: '我是卡斯柏'      
+        },
+        {
+        id: 1,
+        content: '我是小明' 
+        }
+    ];
+    let num = data.length;
+
+    const app = document.querySelector('#app ul'); // 選擇要渲染的位置
+    function render() {
+        let template = '';
+        data.forEach((item) => {
+            template = template + `<li>${item.content}
+            <button type="button" data-id="${item.id}" 
+                class="btnsByRemove">刪除</button></li>`;
+        });
+        app.innerHTML = template;
+        const btnsByRemove = document.querySelectorAll('btnsByRemove');
+        btnsByRemove.forEach(btn => {
+            btn.addEventListener('click', function(evt) {
+                // console.log(evt);
+                console.log(evt.target.dataset.id); // 取得 id，為字串
+                const id = Number.parseInt(evt.target.dataset.id); // 需轉為數字型別
+                // console.log(id);
+                removeItem(id);
+            })
+        })
+    }
+
+    const buttonByAdd = document.querySelector('#buttonByAdd');
+    const inputByAdd = document.querySelector('#inputByAdd');
+    buttonByAdd.addEventListener('click', function() {
+        console.dir(inputByAdd);
+        const val = inputByAdd.value; // input 輸入的值
+        inputByAdd.value = ''; // 新增完需把 input 值 清空
+        addItem(val);
+    })
+
+    function addItem(content) {
+        num++;
+        data.push({
+            id:num,
+            content,
+        });
+        render();
+    }
+
+    function removeItem(id) {  // 數字型別
+        const index = data.findIndex(item => item.id === id);
+        data.splice(index, 1);
+        console.log(data);		
+        render();
+    }
+
+    addItem('我是杰倫');
+    removeItem(2);
+    </script>
+</body>
+</html>
